@@ -18,6 +18,7 @@ function App() {
     updateTodo,
     getTodos,
     getFilteredTodos,
+    updateOrder,
   } = useTodos();
 
   return (
@@ -29,7 +30,13 @@ function App() {
         <TodoFilter filter={filter} setFilter={setFilter} />
         <SearchTodo search={search} setSearch={setSearch} />
         <TodoForm addTodo={addTodo} />
-        <TodoList todos={getFilteredTodos()} toggleTodo={toggleTodo} deleteTodo={deleteTodo} updateTodo={updateTodo} />
+        <TodoList
+          todos={getFilteredTodos()}
+          toggleTodo={toggleTodo}
+          deleteTodo={deleteTodo}
+          updateTodo={updateTodo}
+          updateOrder={updateOrder}
+        />
       </div>
     </div>
   );

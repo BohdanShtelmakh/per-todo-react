@@ -1,3 +1,5 @@
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import { useRef, useState } from 'react';
 import { useIsMobile } from '../../hooks/useIsMobile';
 import type { Todo } from '../../hooks/useTodos';
@@ -61,8 +63,26 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, updateTodo }: P
     return 'text-green-300 dark:text-green-400';
   };
 
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: todo.index });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
   return (
-    <div className='flex justify-between items-center py-2 border-b border-gray-300 dark:border-zinc-700'>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className='flex justify-between items-center py-2 border-b border-gray-300 dark:border-zinc-700'
+    >
+      {!todo.completed ? (
+        <div {...attributes} {...listeners} className='cursor-grab me-2 select-none'>
+          ☰
+        </div>
+      ) : (
+        ''
+      )}
       <div className='flex-1 overflow-hidden'>
         {isEditing ? (
           <div
