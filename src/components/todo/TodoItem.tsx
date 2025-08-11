@@ -8,15 +8,15 @@ interface Props {
   todo: Todo;
   toggleTodo: (id: number) => void;
   deleteTodo: (id: number) => void;
-  updateTodo: (id: number, text: string, dueDate?: string) => void;
+  updateTodo: (id: number, title: string, due_date?: string) => void;
 }
 
 export default function TodoItem({ todo, toggleTodo, deleteTodo, updateTodo }: Props) {
   const isMobile = useIsMobile();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editText, setEditText] = useState(todo.text);
-  const [editDate, setEditDate] = useState(todo.dueDate);
+  const [editText, setEditText] = useState(todo.title);
+  const [editDate, setEditDate] = useState(todo.due_date ? new Date(todo.due_date).toISOString().split('T')[0] : '');
   const containerRef = useRef<HTMLDivElement>(null);
 
   let pressTimer: NodeJS.Timeout;
@@ -55,8 +55,8 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, updateTodo }: P
   };
 
   const handleDueDateColor = () => {
-    if (!todo.dueDate || todo.completed) return 'text-gray-400';
-    const dueDate = new Date(todo.dueDate);
+    if (!todo.due_date || todo.completed) return 'text-gray-400';
+    const dueDate = new Date(todo.due_date);
     const today = new Date();
     if (dueDate < today) return 'text-red-400 dark:text-red-500';
     if (dueDate.toDateString() === today.toDateString()) return 'text-yellow-300 dark:text-yellow-400';
@@ -114,9 +114,9 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, updateTodo }: P
             onDoubleClick={handleEdit}
           >
             <span className={`${isEditing ? 'hidden' : ''} text-sm ${handleDueDateColor()}`}>
-              {todo.dueDate ? new Date(todo.dueDate).toLocaleDateString() : 'No due date'}
+              {todo.due_date ? new Date(todo.due_date).toLocaleDateString() : 'No due date'}
             </span>
-            <span className={`ms-2 ${todo.completed ? 'line-through text-gray-500' : ''}`}>{todo.text}</span>
+            <span className={`ms-2 ${todo.completed ? 'line-through text-gray-500' : ''}`}>{todo.title}</span>
           </div>
         )}
       </div>

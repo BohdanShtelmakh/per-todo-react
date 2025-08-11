@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 interface Props {
-  addTodo: (text: string, dueDate?: string) => void;
+  addTodo: (title: string, dueDate?: string) => void;
 }
 
 export default function TodoForm({ addTodo }: Props) {

@@ -22,7 +22,7 @@ interface Props {
   todos: Todo[];
   toggleTodo: (id: number) => void;
   deleteTodo: (id: number) => void;
-  updateTodo: (id: number, text: string) => void;
+  updateTodo: (id: number, title: string, dueDate?: string) => void;
   updateOrder: (newOrder: Todo[]) => void;
 }
 
@@ -53,7 +53,7 @@ export default function TodoList({ todos, toggleTodo, deleteTodo, updateTodo, up
   };
 
   return (
-    <ul className='todo-list list-none p-0'>
+    <ul className='todo-list list-none p-0 max-h-[400px] overflow-y-auto overscroll-contain'>
       {todos.length === 0 ? (
         <p>No tasks yet ✨</p>
       ) : (

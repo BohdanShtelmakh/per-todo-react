@@ -19,6 +19,8 @@ function App() {
     getTodos,
     getFilteredTodos,
     updateOrder,
+    loading,
+    error,
   } = useTodos();
 
   return (
@@ -30,6 +32,8 @@ function App() {
         <TodoFilter filter={filter} setFilter={setFilter} />
         <SearchTodo search={search} setSearch={setSearch} />
         <TodoForm addTodo={addTodo} />
+        {loading && <p className='text-center text-gray-500'>Loading...</p>}
+        {error && <p className='text-center text-red-500'>{error}</p>}
         <TodoList
           todos={getFilteredTodos()}
           toggleTodo={toggleTodo}
