@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { todosApi } from '../api/todosApi';
 import { loadFromStorage, saveToStorage } from '../utils/Storage';
 import { useDebounce } from './useDebounce';
@@ -10,6 +10,8 @@ export interface Todo {
   completed: boolean;
   due_date?: string;
 }
+
+type Rule<T> = (todo: Partial<T>) => string | null;
 
 export type Filter = 'all' | 'active' | 'completed';
 export type Search = string;
@@ -40,6 +42,45 @@ export function useTodos() {
   useEffect(() => {
     if (!useApi) saveToStorage('search', search);
   }, [search]);
+
+  const applyLocalFilter = useCallback((items: Todo[], f: Filter) => {
+    switch (f) {
+      case 'active':
+        return items.filter((t) => !t.completed);
+      case 'completed':
+        return items.filter((t) => t.completed);
+      default:
+        return items;
+    }
+  }, []);
+
+  const rules: Rule<Todo>[] = useMemo(
+    () => [
+      (todo) => (todo.title?.trim() ? null : 'Title is required'),
+      (todo) => (todo.due_date && isNaN(new Date(todo.due_date).getTime()) ? 'Invalid due date' : null),
+      (todo) => (todo.due_date && new Date(todo.due_date) < new Date() ? 'Due date must be in the future' : null),
+      (todo) =>
+        todo.due_date && new Date(todo.due_date) > new Date('2050-01-01')
+          ? 'Due date must be before the year 2050'
+          : null,
+    ],
+    []
+  );
+
+  const validateTodo = useCallback(
+    (todo: Partial<Todo>) => {
+      const errors: string[] = rules.map((rule) => rule(todo)).filter((msg): msg is string => msg !== null);
+      if (errors.length > 0) {
+        setError(errors.join(', '));
+        return false;
+      }
+      setError(null);
+      return true;
+    },
+    [rules]
+  );
+
+  const getTodos = useCallback((f: Filter) => (useApi ? todos : applyLocalFilter(todos, f)), [todos, applyLocalFilter]);
 
   const refresh = useCallback(
     async (overrideSearch?: string, overrideFilter?: Filter) => {
@@ -80,7 +121,8 @@ export function useTodos() {
   const addTodo = useCallback(
     async (title: string, due_date?: string) => {
       const trimmed = title.trim();
-      if (!trimmed || todos.some((t) => t.title === trimmed)) return;
+
+      if (!validateTodo({ title: trimmed, due_date })) return;
 
       if (useApi) {
         const tempId = Date.now();
@@ -91,6 +133,7 @@ export function useTodos() {
           due_date: due_date ? new Date(due_date).toISOString() : undefined,
           index: 0,
         };
+
         setTodos((prev) => [optimistic, ...prev.map((t, i) => ({ ...t, index: i + 1 }))]);
         try {
           await todosApi.create({ title: trimmed, due_date: optimistic.due_date });
@@ -113,7 +156,7 @@ export function useTodos() {
         return [newTodo, ...prev.map((t, i) => ({ ...t, index: i + 1 }))];
       });
     },
-    [filter, todos]
+    [validateTodo, getTodos, filter]
   );
 
   const toggleTodo = useCallback(
@@ -158,7 +201,8 @@ export function useTodos() {
   const updateTodo = useCallback(
     async (id: number, title: string, due_date?: string) => {
       const trimmed = title.trim();
-      if (!trimmed) return;
+
+      if (!validateTodo({ id, title: trimmed, due_date })) return;
 
       if (useApi) {
         const snapshot = todos;
@@ -180,21 +224,8 @@ export function useTodos() {
         )
       );
     },
-    [todos]
+    [todos, validateTodo]
   );
-
-  const applyLocalFilter = useCallback((items: Todo[], f: Filter) => {
-    switch (f) {
-      case 'active':
-        return items.filter((t) => !t.completed);
-      case 'completed':
-        return items.filter((t) => t.completed);
-      default:
-        return items;
-    }
-  }, []);
-
-  const getTodos = useCallback((f: Filter) => (useApi ? todos : applyLocalFilter(todos, f)), [todos, applyLocalFilter]);
 
   const getFilteredTodos = useCallback(() => {
     if (useApi) {

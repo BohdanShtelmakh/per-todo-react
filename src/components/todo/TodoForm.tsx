@@ -10,7 +10,7 @@ export default function TodoForm({ addTodo }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!value.trim()) return;
+    // if (!value.trim()) return;
     addTodo(value, dueDate);
     setValue('');
     setDueDate('');

@@ -1,7 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useRef, useState } from 'react';
-import { useIsMobile } from '../../hooks/useIsMobile';
 import type { Todo } from '../../hooks/useTodos';
 
 interface Props {
@@ -12,7 +11,7 @@ interface Props {
 }
 
 export default function TodoItem({ todo, toggleTodo, deleteTodo, updateTodo }: Props) {
-  const isMobile = useIsMobile();
+  // const isMobile = useIsMobile();
 
   const [isEditing, setIsEditing] = useState(false);
   const [editText, setEditText] = useState(todo.title);
@@ -38,7 +37,7 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, updateTodo }: P
   };
 
   const handleEdit = () => {
-    if (isMobile) return;
+    // if (isMobile) return;
     setIsEditing(true);
   };
 
