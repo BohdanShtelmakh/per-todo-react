@@ -92,7 +92,7 @@ export function useTodos() {
       try {
         const data = await todosApi.list(q || undefined, f === 'all' ? undefined : f);
         if (seq !== requestSeq.current) return;
-        setTodos(data.slice().sort((a, b) => a.index - b.index));
+        setTodos((data as Todo[]).slice().sort((a: Todo, b: Todo) => a.index - b.index));
         setError(null);
       } catch (e) {
         if (seq !== requestSeq.current) return;

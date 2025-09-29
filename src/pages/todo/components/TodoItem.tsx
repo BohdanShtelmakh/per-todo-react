@@ -1,7 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useRef, useState } from 'react';
-import type { Todo } from '../../hooks/useTodos';
+import type { Todo } from '../../../hooks/useTodos';
 
 interface Props {
   todo: Todo;

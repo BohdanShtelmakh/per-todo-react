@@ -1,4 +1,4 @@
-import { api } from '../utils/Axios';
+import api from '../utils/Axios';
 
 export interface TodoDTO {
   id: number;

@@ -1,4 +1,4 @@
-import type { Filter } from '../../hooks/useTodos';
+import type { Filter } from '../../../hooks/useTodos';
 
 interface Props {
   filter: Filter;

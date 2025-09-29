@@ -1,9 +1,9 @@
 import { useTodos } from '../../hooks/useTodos';
-import SearchTodo from './SearchTodo';
-import TodoCount from './TodoCount';
-import TodoFilter from './TodoFIlter';
-import TodoForm from './TodoForm';
-import TodoList from './TodoList';
+import SearchTodo from './components/SearchTodo';
+import TodoCount from './components/TodoCount';
+import TodoFilter from './components/TodoFIlter';
+import TodoForm from './components/TodoForm';
+import TodoList from './components/TodoList';
 
 export default function Todo() {
   const {

@@ -1,3 +1,30 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Autofill fix for dark inputs */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+select:-webkit-autofill {
+  /* paint your dark bg over the browser's white autofill */
+  -webkit-box-shadow: 0 0 0 1000px #18181b inset; /* zinc-900ish */
+  box-shadow: 0 0 0 1000px #18181b inset;
+
+  /* make text light */
+  -webkit-text-fill-color: #e5e7eb; /* zinc-200 */
+  caret-color: #e5e7eb;
+
+  /* keep Chrome from flashing back to white */
+  transition: background-color 9999s ease-out 0s;
+}
+
+/* Optional: keep borders consistent in dark mode */
+.dark input:-webkit-autofill,
+.dark textarea:-webkit-autofill,
+.dark select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #18181b inset;
+  box-shadow: 0 0 0 1000px #18181b inset;
+  border-color: #52525b; /* zinc-600 */
+}

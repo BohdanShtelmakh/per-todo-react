@@ -1,5 +1,4 @@
-import type { Todo } from "../../hooks/useTodos";
-
+import type { Todo } from '../../../hooks/useTodos';
 
 interface Props {
   getTodos: (filter: 'all' | 'active' | 'completed') => Todo[];

@@ -15,7 +15,7 @@ import {
 } from '@dnd-kit/sortable';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useState } from 'react';
-import type { Todo } from '../../hooks/useTodos';
+import type { Todo } from '../../../hooks/useTodos';
 import TodoItem from './TodoItem';
 
 interface Props {
