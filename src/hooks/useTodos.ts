@@ -134,12 +134,20 @@ export function useTodos() {
           index: 0,
         };
 
-        setTodos((prev) => [optimistic, ...prev.map((t, i) => ({ ...t, index: i + 1 }))]);
         try {
-          await todosApi.create({ title: trimmed, due_date: optimistic.due_date });
-          setTodos(getTodos(filter));
+          const created = await todosApi.create({
+            title: trimmed,
+            due_date: optimistic.due_date,
+          });
+
+          setError(null);
+          setTodos((prev) => {
+            const withoutTemp = prev.filter((t) => t.id !== tempId);
+            return [created, ...withoutTemp.map((t, i) => ({ ...t, index: i + 1 }))];
+          });
         } catch (e) {
           setError(getErrorMessage(e, 'Create failed'));
+          // відкотити оптимістичне додавання
           setTodos((prev) => prev.filter((t) => t.id !== tempId).map((t, i) => ({ ...t, index: i })));
         }
         return;
@@ -156,7 +164,7 @@ export function useTodos() {
         return [newTodo, ...prev.map((t, i) => ({ ...t, index: i + 1 }))];
       });
     },
-    [validateTodo, getTodos, filter]
+    [validateTodo]
   );
 
   const toggleTodo = useCallback(
@@ -168,6 +176,7 @@ export function useTodos() {
         setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, completed: nextCompleted } : t)));
         try {
           const updated = await todosApi.update(id, { completed: nextCompleted });
+          setError(null);
           setTodos((prev) => prev.map((t) => (t.id === id ? updated : t)));
         } catch (e) {
           setError(getErrorMessage(e, 'Toggle failed'));
@@ -187,6 +196,7 @@ export function useTodos() {
         setTodos((prev) => prev.filter((t) => t.id !== id).map((t, i) => ({ ...t, index: i })));
         try {
           await todosApi.delete(id);
+          setError(null);
         } catch (e) {
           setError(getErrorMessage(e, 'Delete failed'));
           setTodos(snapshot);
@@ -210,6 +220,7 @@ export function useTodos() {
         setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, title: trimmed, due_date: isoDue } : t)));
         try {
           const updated = await todosApi.update(id, { title: trimmed, due_date: isoDue });
+          setError(null);
           setTodos((prev) => prev.map((t) => (t.id === id ? updated : t)));
         } catch (e) {
           setError(getErrorMessage(e, 'Update failed'));
@@ -261,6 +272,7 @@ export function useTodos() {
       if (useApi) {
         try {
           await todosApi.reorder(finalOrder.map((t) => t.id));
+          setError(null);
         } catch (e) {
           setError(getErrorMessage(e, 'Reorder failed'));
           setTodos(snapshot);
