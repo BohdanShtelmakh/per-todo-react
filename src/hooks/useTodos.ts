@@ -141,14 +141,11 @@ export function useTodos() {
           });
 
           setError(null);
-          setTodos((prev) => {
-            const withoutTemp = prev.filter((t) => t.id !== tempId);
-            return [created, ...withoutTemp.map((t, i) => ({ ...t, index: i + 1 }))];
-          });
+          if (created) {
+            await refresh();
+          }
         } catch (e) {
           setError(getErrorMessage(e, 'Create failed'));
-          // відкотити оптимістичне додавання
-          setTodos((prev) => prev.filter((t) => t.id !== tempId).map((t, i) => ({ ...t, index: i })));
         }
         return;
       }
@@ -164,7 +161,7 @@ export function useTodos() {
         return [newTodo, ...prev.map((t, i) => ({ ...t, index: i + 1 }))];
       });
     },
-    [validateTodo]
+    [refresh, validateTodo]
   );
 
   const toggleTodo = useCallback(
@@ -173,39 +170,36 @@ export function useTodos() {
         const current = todos.find((t) => t.id === id);
         if (!current) return;
         const nextCompleted = !current.completed;
-        setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, completed: nextCompleted } : t)));
         try {
           const updated = await todosApi.update(id, { completed: nextCompleted });
           setError(null);
-          setTodos((prev) => prev.map((t) => (t.id === id ? updated : t)));
+          if (updated) {
+            await refresh();
+          }
         } catch (e) {
           setError(getErrorMessage(e, 'Toggle failed'));
-          setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, completed: current.completed } : t)));
         }
         return;
       }
-      setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, completed: !t.completed } : t)));
     },
-    [todos]
+    [refresh, todos]
   );
 
   const deleteTodo = useCallback(
     async (id: number) => {
       if (useApi) {
-        const snapshot = todos;
-        setTodos((prev) => prev.filter((t) => t.id !== id).map((t, i) => ({ ...t, index: i })));
         try {
           await todosApi.delete(id);
           setError(null);
+          await refresh();
         } catch (e) {
           setError(getErrorMessage(e, 'Delete failed'));
-          setTodos(snapshot);
         }
         return;
       }
       setTodos((prev) => prev.filter((t) => t.id !== id).map((t, i) => ({ ...t, index: i })));
     },
-    [todos]
+    [refresh]
   );
 
   const updateTodo = useCallback(
@@ -215,16 +209,15 @@ export function useTodos() {
       if (!validateTodo({ id, title: trimmed, due_date })) return;
 
       if (useApi) {
-        const snapshot = todos;
         const isoDue = due_date ? new Date(due_date).toISOString() : undefined;
-        setTodos((prev) => prev.map((t) => (t.id === id ? { ...t, title: trimmed, due_date: isoDue } : t)));
         try {
           const updated = await todosApi.update(id, { title: trimmed, due_date: isoDue });
           setError(null);
-          setTodos((prev) => prev.map((t) => (t.id === id ? updated : t)));
+          if (updated) {
+            await refresh();
+          }
         } catch (e) {
           setError(getErrorMessage(e, 'Update failed'));
-          setTodos(snapshot);
         }
         return;
       }
@@ -235,7 +228,7 @@ export function useTodos() {
         )
       );
     },
-    [todos, validateTodo]
+    [refresh, validateTodo]
   );
 
   const getFilteredTodos = useCallback(() => {
@@ -266,20 +259,17 @@ export function useTodos() {
       const remaining = todos.filter((t) => !existingIds.has(t.id));
       const finalOrder = [...updated, ...remaining].map((t, i) => ({ ...t, index: i }));
 
-      const snapshot = todos;
-      setTodos(finalOrder);
-
       if (useApi) {
         try {
           await todosApi.reorder(finalOrder.map((t) => t.id));
           setError(null);
+          await refresh();
         } catch (e) {
           setError(getErrorMessage(e, 'Reorder failed'));
-          setTodos(snapshot);
         }
       }
     },
-    [todos]
+    [refresh, todos]
   );
 
   return {
