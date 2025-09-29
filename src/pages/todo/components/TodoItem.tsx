@@ -76,7 +76,7 @@ export default function TodoItem({ todo, toggleTodo, deleteTodo, updateTodo }: P
       className='flex justify-between items-center py-2 border-b border-gray-300 dark:border-zinc-700'
     >
       {!todo.completed ? (
-        <div {...attributes} {...listeners} className='cursor-grab me-2 select-none'>
+        <div {...attributes} {...listeners} className='cursor-grab me-2 select-none' style={{ touchAction: 'none' }}>
           ☰
         </div>
       ) : (

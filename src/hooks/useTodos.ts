@@ -259,17 +259,18 @@ export function useTodos() {
       const remaining = todos.filter((t) => !existingIds.has(t.id));
       const finalOrder = [...updated, ...remaining].map((t, i) => ({ ...t, index: i }));
 
+      setTodos(finalOrder);
+
       if (useApi) {
         try {
           await todosApi.reorder(finalOrder.map((t) => t.id));
           setError(null);
-          await refresh();
         } catch (e) {
           setError(getErrorMessage(e, 'Reorder failed'));
         }
       }
     },
-    [refresh, todos]
+    [todos]
   );
 
   return {

@@ -19,7 +19,12 @@ select:-webkit-autofill {
   /* keep Chrome from flashing back to white */
   transition: background-color 9999s ease-out 0s;
 }
-
+.todo-list {
+  -webkit-overflow-scrolling: touch;
+}
+.drag-handle {
+  touch-action: none;
+}
 /* Optional: keep borders consistent in dark mode */
 .dark input:-webkit-autofill,
 .dark textarea:-webkit-autofill,
