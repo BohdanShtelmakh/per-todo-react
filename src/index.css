@@ -3,22 +3,44 @@
 @tailwind utilities;
 
 /* Autofill fix for dark inputs */
+/* Theme variables */
+:root {
+  --af-bg: #ffffff; /* light background */
+  --af-fg: #18181b; /* light text */
+  --af-caret: #18181b;
+  --af-radius: 8px; /* optional: match your inputs */
+}
+
+.dark {
+  --af-bg: #18181b; /* dark bg (zinc-900-ish) */
+  --af-fg: #e5e7eb; /* zinc-200 */
+  --af-caret: #e5e7eb;
+}
+
+/* One rule for both themes (variables change when .dark toggles) */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 textarea:-webkit-autofill,
-select:-webkit-autofill {
-  /* paint your dark bg over the browser's white autofill */
-  -webkit-box-shadow: 0 0 0 1000px #18181b inset; /* zinc-900ish */
-  box-shadow: 0 0 0 1000px #18181b inset;
+select:-webkit-autofill,
+input:autofill,
+textarea:autofill,
+select:autofill {
+  /* Paint the background – the classic trick */
+  -webkit-box-shadow: 0 0 0 1000px var(--af-bg) inset;
+  box-shadow: 0 0 0 1000px var(--af-bg) inset;
 
-  /* make text light */
-  -webkit-text-fill-color: #e5e7eb; /* zinc-200 */
-  caret-color: #e5e7eb;
+  /* Text / caret colors */
+  -webkit-text-fill-color: var(--af-fg);
+  caret-color: var(--af-caret);
 
-  /* keep Chrome from flashing back to white */
-  transition: background-color 9999s ease-out 0s;
+  /* Optional: keep your rounded corners consistent */
+  border-radius: var(--af-radius);
+
+  /* Don’t use the super-long transition, it delays repaint */
+  transition: background-color 0.01s linear;
 }
+
 .todo-list {
   -webkit-overflow-scrolling: touch;
 }

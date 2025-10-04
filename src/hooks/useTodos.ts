@@ -80,8 +80,6 @@ export function useTodos() {
     [rules]
   );
 
-  const getTodos = useCallback((f: Filter) => (useApi ? todos : applyLocalFilter(todos, f)), [todos, applyLocalFilter]);
-
   const refresh = useCallback(
     async (overrideSearch?: string, overrideFilter?: Filter) => {
       if (!useApi) return;
@@ -273,6 +271,25 @@ export function useTodos() {
     [todos]
   );
 
+  const getTodosCount = useCallback(
+    (filter: 'all' | 'active' | 'completed') => {
+      if (useApi) {
+        return todos.filter((t) => {
+          if (filter === 'active') return !t.completed;
+          if (filter === 'completed') return t.completed;
+          return true;
+        });
+      }
+
+      return todos.filter((t) => {
+        if (filter === 'active') return !t.completed;
+        if (filter === 'completed') return t.completed;
+        return true;
+      });
+    },
+    [todos]
+  );
+
   return {
     useApi,
     loading,
@@ -287,7 +304,7 @@ export function useTodos() {
     toggleTodo,
     deleteTodo,
     updateTodo,
-    getTodos,
+    getTodosCount,
     getFilteredTodos,
     updateOrder,
   };

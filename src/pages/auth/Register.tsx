@@ -61,11 +61,7 @@ export default function Register() {
         </div>
       )}
 
-      <form
-        onSubmit={onRegister}
-        noValidate
-        className='grid gap-3 max-w-md mx-auto rounded-lg border border-gray-200 dark:border-zinc-700 bg-white dark:bg-zinc-800 p-4 sm:p-6 shadow-sm'
-      >
+      <form onSubmit={onRegister} noValidate className='grid gap-3 max-w-md mx-auto  p-4 sm:p-6 shadow-sm'>
         <div className='grid gap-1'>
           <input
             className={`flex-1 w-full p-2 pr-8 border rounded dark:bg-zinc-800 dark:border-zinc-600 ${
@@ -122,7 +118,11 @@ export default function Register() {
           )}
         </div>
 
-        <button className='btn w-full' type='submit' disabled={isLoadingReg}>
+        <button
+          className='btn btn-primary w-full rounded px-4 py-2 font-semibold bg-zinc-800 text-white hover:bg-zinc-700 dark:bg-zinc-600 dark:hover:bg-zinc-700 '
+          type='submit'
+          disabled={isLoadingReg}
+        >
           {isLoadingReg ? 'Creating…' : 'Create account'}
         </button>
       </form>
@@ -133,11 +133,6 @@ export default function Register() {
           Sign in
         </Link>
       </div>
-      <p className='text-center mt-2'>
-        <Link className='link' to='/'>
-          Back
-        </Link>
-      </p>
     </div>
   );
 }

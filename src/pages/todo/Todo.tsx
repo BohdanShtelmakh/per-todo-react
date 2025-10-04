@@ -15,7 +15,7 @@ export default function Todo() {
     toggleTodo,
     deleteTodo,
     updateTodo,
-    getTodos,
+    getTodosCount,
     getFilteredTodos,
     updateOrder,
     loading,
@@ -25,7 +25,7 @@ export default function Todo() {
   return (
     <div>
       <h1 className='text-3xl font-bold text-center mb-4'>📝 My ToDo List</h1>
-      <TodoCount getTodos={getTodos} />
+      <TodoCount getTodosCount={getTodosCount} />
       <TodoFilter filter={filter} setFilter={setFilter} />
       <SearchTodo search={search} setSearch={setSearch} />
       <TodoForm addTodo={addTodo} />

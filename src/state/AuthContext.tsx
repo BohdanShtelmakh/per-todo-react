@@ -23,14 +23,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<AppUser | null>(null);
   const [isLoading, setLoading] = useState(true);
 
-  // On app load: if a token exists, validate it
   useEffect(() => {
     (async () => {
       try {
         if (!authToken.get()) return;
         const u = await apiMe();
         setUser(u);
-        console.log('user', u);
       } catch {
         authToken.clear();
       } finally {
